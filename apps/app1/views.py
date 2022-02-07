@@ -11,9 +11,3 @@ def index(request: WSGIRequest) -> HttpResponse:
 
     response: HttpResponse = HttpResponse(text)
     return response
-
-def index_2(request: WSGIRequest) -> HttpResponse:
-    return render(request, 'index.html')
-
-def about(request: WSGIRequest) -> HttpResponse:
-    return render(request, 'about.html')

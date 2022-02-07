@@ -76,7 +76,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 # Custom constants
 #
-ADMIN_SITE_URL = '9e934yf34ihn/'
+ADMIN_SITE_URL = 'root/'
 
 LANGUAGE_CODE = 'ru'
 TIME_ZONE = 'Asia/Almaty'
