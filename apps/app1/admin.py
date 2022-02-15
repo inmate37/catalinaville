@@ -7,11 +7,16 @@ from app1.models import (
     Account,
     Student,
     Group,
+    Professor,
 )
 
 
 class AccountAdmin(admin.ModelAdmin):
-    readonly_fields = ()
+    readonly_fields = (
+        'datetime_created',
+        'datetime_updated',
+        'datetime_deleted',
+    )
 
     def get_readonly_fields(
         self,
@@ -26,7 +31,23 @@ class AccountAdmin(admin.ModelAdmin):
 class StudentAdmin(admin.ModelAdmin):
     STUDENT_EDIT_MAX_AGE = 16
 
-    readonly_fields = ()
+    readonly_fields = (
+        'datetime_created',
+        'datetime_updated',
+        'datetime_deleted',
+    )
+    list_filter = (
+        'age',
+        'gpa',
+    )
+    search_fields = (
+        'account__full_name',
+    )
+    list_display = (
+        #'account__full_name',
+        'age',
+        'gpa',
+    )
 
     def student_age_validation(
         self,
@@ -52,8 +73,8 @@ class StudentAdmin(admin.ModelAdmin):
 
         # v1 | student_age_validation
         #
-        result: tuple = self.student_age_validation(obj)
-        return result
+        # result: tuple = self.student_age_validation(obj)
+        # return result
 
         # v2 | student_age_validation_2
         #
@@ -62,9 +83,27 @@ class StudentAdmin(admin.ModelAdmin):
         #     return self.readonly_fields + ('age',)
         # return self.readonly_fields
 
+        age_condition: bool = obj.age <= self.STUDENT_EDIT_MAX_AGE
+        if obj and age_condition:
+            return self.readonly_fields + ('age',)
+
+        return self.readonly_fields
+
 
 class GroupAdmin(admin.ModelAdmin):
-    readonly_fields = ()
+    readonly_fields = (
+        'datetime_created',
+        'datetime_updated',
+        'datetime_deleted',
+    )
+
+
+class ProfessorAdmin(admin.ModelAdmin):
+    readonly_fields = (
+        'datetime_created',
+        'datetime_updated',
+        'datetime_deleted',
+    )
 
 
 admin.site.register(
@@ -76,6 +115,9 @@ admin.site.register(
 admin.site.register(
     Student, StudentAdmin
 )
+admin.site.register(
+    Professor, ProfessorAdmin
+)
 
 
 
@@ -101,35 +143,16 @@ admin.site.register(
 
 
 
+# class StudentAdmin(admin.ModelAdmin):
+#     STUDENT_EDIT_MAX_AGE = 16
 
+#     readonly_fields = ()
+#     list_display = ('get_account_full_name', 'age', 'gpa',)
+#     list_filter = ('age',)
+#     search_fields = ('age',)
 
-class StudentAdmin(admin.ModelAdmin):
-    STUDENT_EDIT_MAX_AGE = 16
+#     def get_account_full_name(self, obj):
+#         return obj.account.full_name
 
-    readonly_fields = ()
-    list_display = ('get_account_full_name', 'age', 'gpa',)
-    list_filter = ('age',)
-    search_fields = ('age',)
-
-    def get_account_full_name(self, obj):
-        return obj.account.full_name
-
-    get_account_full_name.short_description = 'Аккаунт'
-    get_account_full_name.admin_order_field = 'account__full_name'
-
-    def get_readonly_fields(
-        self,
-        request: WSGIRequest,
-        obj: Optional[Account] = None
-    ) -> tuple:
-        age_condition: bool = obj.age <= self.STUDENT_EDIT_MAX_AGE
-
-        if obj and age_condition:
-            return self.readonly_fields + ('age',)
-
-        return self.readonly_fields
-
-
-        age_condition: bool = obj.age <= self.STUDENT_EDIT_MAX_AGE
-        if obj and age_condition:
-            return self.readonly_fields + ('age',)
+#     get_account_full_name.short_description = 'Аккаунт'
+#     get_account_full_name.admin_order_field = 'account__full_name'

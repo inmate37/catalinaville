@@ -1,12 +1,25 @@
+from datetime import (
+    datetime,
+)
+
 from django.db import models
+from django.db.models import (
+    QuerySet,
+)
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import (
+    User,
+)
 from django.core.exceptions import (
     ValidationError,
 )
 
+from abstracts.models import (
+    AbstractDateTime,
+)
 
-class Group(models.Model):
+
+class Group(AbstractDateTime):
     NAME_MAX_LENGTH = 10
 
     name = models.CharField(
@@ -19,13 +32,21 @@ class Group(models.Model):
 
     class Meta:
         ordering = (
-            'name',
+            'id',
         )
         verbose_name = 'Группа'
         verbose_name_plural = 'Группы'
 
 
-class Account(models.Model):
+class AccountQuerySet(QuerySet):
+
+    def get_superusers(self) -> QuerySet:
+        return self.filter(
+            user__is_superuser=True
+        )
+
+
+class Account(AbstractDateTime):
     FULL_NAME_MAX_LENGTH = 20
 
     user = models.OneToOneField(
@@ -39,6 +60,8 @@ class Account(models.Model):
     )
     description = models.TextField()
 
+    objects = AccountQuerySet().as_manager()
+
     def __str__(self) -> str:
         return f'Аккаунт: {self.user.id} / {self.full_name}'
 
@@ -50,7 +73,16 @@ class Account(models.Model):
         verbose_name_plural = 'Аккаунты'
 
 
-class Student(models.Model):
+class StudentQuerySet(QuerySet):
+    ADULT_AGE = 18
+
+    def get_adult_students(self) -> QuerySet:
+        return self.filter(
+            age__gte=self.ADULT_AGE
+        )
+
+
+class Student(AbstractDateTime):
     MAX_AGE = 27
 
     account = models.OneToOneField(
@@ -69,6 +101,7 @@ class Student(models.Model):
     gpa = models.FloatField(
         verbose_name='Среднее значение GPA'
     )
+    objects = StudentQuerySet().as_manager()
 
     def __str__(self) -> str:
         return 'Студент: {0} / {1} / {2}'.format(
@@ -84,17 +117,25 @@ class Student(models.Model):
     ) -> None:
         if self.age > self.MAX_AGE:
             # v1
-            #self.age = self.MAX_AGE
+            # self.age = self.MAX_AGE
 
             # v2
             raise ValidationError(
                 f'Допустимый возраст: {self.MAX_AGE}'
             )
-        # if self.age <= self.MAX_AGE:
-        #     pass
-
         super().save(*args, **kwargs)
 
+    def delete(self) -> None:
+        datetime_now: datetime = datetime.now()
+
+        self.datetime_deleted = datetime_now
+
+        self.save(
+            update_fields=['datetime_deleted']
+        )
+        # NOTE: Actual thing that will be triggered
+        #
+        # super().delete()
 
     class Meta:
         ordering = (
@@ -102,3 +143,61 @@ class Student(models.Model):
         )
         verbose_name = 'Студент'
         verbose_name_plural = 'Студенты'
+
+
+class Professor(AbstractDateTime):
+    FULL_NAME_MAX_LENGTH = 20
+    TOPIC_MAX_LENGTH = 10
+
+    TOPIC_JAVA = 'java'
+    TOPIC_PYTHON = 'python'
+    TOPIC_TS = 'typescript'
+    TOPIC_JS = 'javascript'
+    TOPIC_RUBY = 'ruby'
+    TOPIC_GO = 'golang'
+    TOPIC_SQL = 'sql'
+    TOPIC_SWIFT = 'swift'
+    TOPIC_PHP = 'php'
+    TOPIC_DELPHI = 'deplhi'
+    TOPIC_PERL = 'perl'
+
+    TOPIC_CHOICES = (
+        (TOPIC_JAVA, 'Java'),
+        (TOPIC_PYTHON, 'Python'),
+        (TOPIC_TS, 'TypeScript'),
+        (TOPIC_JS, 'JavaScript'),
+        (TOPIC_RUBY, 'Ruby'),
+        (TOPIC_GO, 'GoLang'),
+        (TOPIC_SQL, 'SQL'),
+        (TOPIC_SWIFT, 'Swift'),
+        (TOPIC_PHP, 'PHP'),
+        (TOPIC_DELPHI, 'Deplhi'),
+        (TOPIC_PERL, 'Perl'),
+    )
+
+    full_name = models.CharField(
+        verbose_name='полное имя',
+        max_length=FULL_NAME_MAX_LENGTH
+    )
+    topic = models.CharField(
+        verbose_name='предмет',
+        max_length=TOPIC_MAX_LENGTH,
+        choices=TOPIC_CHOICES,
+        default=TOPIC_JAVA
+    )
+    students = models.ManyToManyField(
+        Student
+    )
+
+    def __str__(self) -> str:
+        return f'Профессор: {self.full_name} / Топик: {self.topic}'
+
+    def save(self, *args: tuple, **kwargs: dict) -> None:
+        super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = (
+            'topic',
+        )
+        verbose_name = 'Профессор'
+        verbose_name_plural = 'Профессоры'
