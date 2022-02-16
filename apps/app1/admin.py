@@ -45,9 +45,16 @@ class StudentAdmin(admin.ModelAdmin):
     )
     list_display = (
         #'account__full_name',
+        #'get_account_full_name'
         'age',
         'gpa',
     )
+
+    def get_account_full_name(self, obj: Student) -> str:
+        return obj.account.full_name
+
+    get_account_full_name.short_description = 'Аккаунт'
+    get_account_full_name.admin_order_field = 'account__full_name'
 
     def student_age_validation(
         self,
@@ -118,41 +125,3 @@ admin.site.register(
 admin.site.register(
     Professor, ProfessorAdmin
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# class StudentAdmin(admin.ModelAdmin):
-#     STUDENT_EDIT_MAX_AGE = 16
-
-#     readonly_fields = ()
-#     list_display = ('get_account_full_name', 'age', 'gpa',)
-#     list_filter = ('age',)
-#     search_fields = ('age',)
-
-#     def get_account_full_name(self, obj):
-#         return obj.account.full_name
-
-#     get_account_full_name.short_description = 'Аккаунт'
-#     get_account_full_name.admin_order_field = 'account__full_name'

@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import render
 
+from app1.models import Student
+
 
 def index(request: WSGIRequest) -> HttpResponse:
     user: User = User.objects.first()
@@ -11,3 +13,35 @@ def index(request: WSGIRequest) -> HttpResponse:
 
     response: HttpResponse = HttpResponse(text)
     return response
+
+
+# def index(request: WSGIRequest) -> HttpResponse:
+#     user: User = User.objects.first()
+#     name: str = user.first_name
+#     text: str = f'<h1>Имя: {name}</h1>'
+
+#     response: HttpResponse = HttpResponse(text)
+#     return response
+
+
+# def index_2(request: WSGIRequest) -> HttpResponse:
+#     return HttpResponse(
+#         "<h1>Страница: Стартовая</h1>"
+#     )
+
+
+# def index_3(request: WSGIRequest) -> HttpResponse:
+#     students = Student.objects.all()
+#     context: dict = {
+#         'title': 'Главная страница',
+#         'students': students
+#     }
+#     return render(
+#         request,
+#         'index.html',
+#         context
+#     )
+
+
+# def about(request: WSGIRequest) -> HttpResponse:
+#     return render(request, 'about.html')

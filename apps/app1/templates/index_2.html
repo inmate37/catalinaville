@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <h1>Текст на главной</h1>
+
+    {% include 'additional.html' %}
+
+    {% for student in students %}
+        <div class="alert alert-error mt-2">
+            <h3>{{ student.account.full_name }}<h3>
+            <p>{{ student.gpa }}</p>
+            <p>{{ student.age }}</p>
+        </div>
+    {% endfor %}
+{% endblock %}
