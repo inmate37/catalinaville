@@ -23,7 +23,11 @@ def show(request: WSGIRequest) -> HttpResponse:
     text: str = f'<h1>Имя: {name}</h1>'
 
     response: HttpResponse = HttpResponse(text)
-    return response
+    return render(
+        request,
+        "index_2.html",
+        context={"users":1}
+    )
 
 
 # def index_2(request: WSGIRequest) -> HttpResponse:
