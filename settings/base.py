@@ -79,6 +79,8 @@ AUTH_PASSWORD_VALIDATORS = [
 #
 ADMIN_SITE_URL = 'root/'
 
+STATIC_URL = '/static/'
+STATIC_ROOT = "./apps/app1/static/"
 LANGUAGE_CODE = 'ru'
 TIME_ZONE = 'Asia/Almaty'
 USE_I18N = True
