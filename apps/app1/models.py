@@ -110,32 +110,32 @@ class Student(AbstractDateTime):
             self.gpa,
         )
 
-    def save(
-        self,
-        *args: tuple,
-        **kwargs: dict
-    ) -> None:
-        if self.age > self.MAX_AGE:
-            # v1
-            # self.age = self.MAX_AGE
+    # def save(
+    #     self,
+    #     *args: tuple,
+    #     **kwargs: dict
+    # ) -> None:
+    #     if self.age > self.MAX_AGE:
+    #         # v1
+    #         # self.age = self.MAX_AGE
 
-            # v2
-            raise ValidationError(
-                f'Допустимый возраст: {self.MAX_AGE}'
-            )
-        super().save(*args, **kwargs)
+    #         # v2
+    #         raise ValidationError(
+    #             f'Допустимый возраст: {self.MAX_AGE}'
+    #         )
+    #     super().save(*args, **kwargs)
 
-    def delete(self) -> None:
-        datetime_now: datetime = datetime.now()
+    # def delete(self) -> None:
+    #     datetime_now: datetime = datetime.now()
 
-        self.datetime_deleted = datetime_now
+    #     self.datetime_deleted = datetime_now
 
-        self.save(
-            update_fields=['datetime_deleted']
-        )
-        # NOTE: Actual thing that will be triggered
-        #
-        # super().delete()
+    #     self.save(
+    #         update_fields=['datetime_deleted']
+    #     )
+    #     # NOTE: Actual thing that will be triggered
+    #     #
+    #     # super().delete()
 
     class Meta:
         ordering = (

@@ -3,10 +3,32 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.index),
-    # path('index_2', views.index_2),
+    path('', views.index_3),
+    path('index_2', views.index_2),
     # path('about/', views.about),
 ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # urlpatterns = [
 #     path('', views.index_3, name='page_home'),
 #     path('about/', views.about, name='page_about'),

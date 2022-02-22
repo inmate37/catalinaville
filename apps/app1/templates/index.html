@@ -1,9 +1,22 @@
 {% extends 'base.html' %}
 
-{% block title %}Главная страница{% endblock %}
+{% block title %}{{ ctx_title }}{% endblock %}
 
 {% block content %}
     <h1>Текст на главной</h1>
 
     {% include 'additional.html' %}
+    {% include 'additional.html' %}
+    {% include 'additional.html' %}
+
+    {% for user in ctx_users %}
+        <div>
+            <p>Username: {{ user.username }}</p>
+            <p>Email: {{ user.email }}</p>
+            <p>Name: {{ user.first_name }}</p>
+            <p>Surname: {{ user.last_name }}</p>
+            <hr>
+        </div>
+    {% endfor %}
+
 {% endblock %}
