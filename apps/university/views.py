@@ -10,8 +10,8 @@ from university.models import Student
 def index(request: WSGIRequest) -> HttpResponse:
     users: QuerySet = User.objects.all()
     context: dict = {
-        'title': 'Главная страница',
-        'users': users,
+        'ctx_title': 'Главная страница',
+        'ctx_users': users,
     }
     return render(
         request,
@@ -21,12 +21,24 @@ def index(request: WSGIRequest) -> HttpResponse:
 
 
 def show(request: WSGIRequest) -> HttpResponse:
-    user: User = User.objects.first()
-    name: str = user.first_name
-    text: str = f'<h1>Имя: {name}</h1>'
+    user: User = request.user
 
-    response: HttpResponse = HttpResponse(text)
-    return response
+    # TODO: pass selected user ctx to template
+
+    context: dict = {
+        'ctx_title': 'Профиль пользователя',
+        'ctx_user': user,
+    }
+    return render(
+        request,
+        template_name='university/profile.html',
+        context=context
+    )
+
+
+def delete(request: WSGIRequest) -> HttpResponse:
+    # TODO
+    ...
 
 
 def about(request: WSGIRequest) -> HttpResponse:
@@ -36,20 +48,7 @@ def about(request: WSGIRequest) -> HttpResponse:
     )
 
 
-def index_2(request: WSGIRequest) -> HttpResponse:
-    users: QuerySet = User.objects.all()
-    context: dict = {
-        'ctx_title': 'Главная страница',
-        'ctx_users': users,
-    }
-    return render(
-        request,
-        template_name='university/index_2.html',
-        context=context
-    )
-
-
-def index_3(request: WSGIRequest) -> HttpResponse:
+def primitive(request: WSGIRequest) -> HttpResponse:
     return HttpResponse(
-        '<h1>Главная страница III</h1>'
+        '<h1>Примитивная страница</h1>'
     )

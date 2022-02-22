@@ -1,22 +1,23 @@
 import os
 import sys
 
+from settings.const import *  # noqa
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# -----------------------------------------------|
+# Path
+#
+ROOT_URLCONF = 'urls.urls'
+
+BASE_DIR = os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))
+)
 sys.path.append(BASE_DIR)
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = 'static/'
-
-ROOT_URLCONF = 'urls.urls'
-
-SECRET_KEY = '@1s5i)b=b9=&-ixt7@gf5%5t&uu1*znu*z98++jorx3&d&x4&&'
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
-WSGI_APPLICATION = 'settings.wsgi.application'
-
+# -----------------------------------------------|
+# Apps
+#
 DJANGO_AND_THIRD_PARTY_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -24,7 +25,6 @@ DJANGO_AND_THIRD_PARTY_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'debug_toolbar',
 ]
 PROJECT_APPS = [
     'abstracts.apps.AbstractsConfig',
@@ -32,12 +32,18 @@ PROJECT_APPS = [
 ]
 INSTALLED_APPS = DJANGO_AND_THIRD_PARTY_APPS + PROJECT_APPS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# -----------------------------------------------|
+# Static | Media
+#
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = 'static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+# -----------------------------------------------|
+# Middleware | Templates | Validators
+#
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -46,7 +52,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 TEMPLATES = [
     {
@@ -79,23 +84,11 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',  # noqa
     },
 ]
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
 # -----------------------------------------------|
-# Custom constants
+# Localization
 #
-ADMIN_SITE_URL = 'root/'
-
 LANGUAGE_CODE = 'ru'
 TIME_ZONE = 'Asia/Almaty'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'madi7maratovic@gmail.com'
-EMAIL_HOST_PASSWORD = 'gcsepbjdmsvopjsf'
-EMAIL_PORT = 587

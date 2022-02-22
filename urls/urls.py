@@ -5,18 +5,9 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path(
-        settings.ADMIN_SITE_URL,
-        admin.site.urls
-    ),
-    path(
-        '',
-        include('university.urls')
-    ),
-    path(
-        '__debug__/',
-        include('debug_toolbar.urls')
-    ),
+    path(settings.ADMIN_SITE_URL, admin.site.urls),
+    path('', include('university.urls')),
+    path('__debug__/', include('debug_toolbar.urls')),
 ] + static(
     settings.STATIC_URL,
     document_root=settings.STATIC_ROOT
