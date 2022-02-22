@@ -8,6 +8,16 @@ from app1.models import Student
 
 
 def index(request: WSGIRequest) -> HttpResponse:
+    users: User = User.objects.all()
+
+    return render(
+        request,
+        "index.html",
+        context={"users":users}
+    )
+
+
+def show(request: WSGIRequest) -> HttpResponse:
     user: User = User.objects.first()
     name: str = user.first_name
     text: str = f'<h1>Имя: {name}</h1>'
@@ -28,41 +38,16 @@ def index_3(request: WSGIRequest) -> HttpResponse:
         'ctx_title': 'Главная страница',
         'ctx_users': users,
     }
+    # return render(
+    #     request,
+    #     'index.html',
+    #     context
+    # )
     return render(
         request,
-        'index.html',
-        context
+        "index_2.html",
+        context={"users":1}
     )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # def index_3(request: WSGIRequest) -> HttpResponse:
