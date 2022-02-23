@@ -1,13 +1,13 @@
 import os
 import sys
 
-from settings.const import *  # noqa
+from settings.conf import *  # noqa
 
 
-# -----------------------------------------------|
+# ------------------------------------------------
 # Path
 #
-ROOT_URLCONF = 'urls.urls'
+ROOT_URLCONF = 'settings.urls'
 
 BASE_DIR = os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))
@@ -15,7 +15,7 @@ BASE_DIR = os.path.dirname(
 sys.path.append(BASE_DIR)
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
 
-# -----------------------------------------------|
+# ------------------------------------------------
 # Apps
 #
 DJANGO_AND_THIRD_PARTY_APPS = [
@@ -25,6 +25,8 @@ DJANGO_AND_THIRD_PARTY_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_extensions',
 ]
 PROJECT_APPS = [
     'abstracts.apps.AbstractsConfig',
@@ -32,16 +34,15 @@ PROJECT_APPS = [
 ]
 INSTALLED_APPS = DJANGO_AND_THIRD_PARTY_APPS + PROJECT_APPS
 
-# -----------------------------------------------|
+# ------------------------------------------------
 # Static | Media
 #
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = 'static/'
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# -----------------------------------------------|
+# ------------------------------------------------
 # Middleware | Templates | Validators
 #
 MIDDLEWARE = [
@@ -84,7 +85,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',  # noqa
     },
 ]
-# -----------------------------------------------|
+# ------------------------------------------------
 # Localization
 #
 LANGUAGE_CODE = 'ru'

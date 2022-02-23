@@ -42,7 +42,7 @@ class Command(BaseCommand):
     def _generate_users(self) -> None:
         """Generates User objects."""
 
-        TOTAL_USERS_COUNT = 100
+        TOTAL_USERS_COUNT = 500
 
         def generate_username() -> str:
             return '{0}_{1}'.format(

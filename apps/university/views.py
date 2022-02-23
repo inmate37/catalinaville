@@ -38,7 +38,7 @@ def show(request: WSGIRequest) -> HttpResponse:
 
 def delete(request: WSGIRequest) -> HttpResponse:
     # TODO
-    ...
+    pass
 
 
 def about(request: WSGIRequest) -> HttpResponse:

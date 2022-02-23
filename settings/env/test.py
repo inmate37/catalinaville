@@ -1,12 +1,12 @@
 from settings.base import *  # noqa
 
 
-# -----------------------------------------------|
+# ------------------------------------------------
 #
 DEBUG = True
 WSGI_APPLICATION = 'deploy.test.wsgi.application'
 
-# -----------------------------------------------|
+# ------------------------------------------------
 #
 DATABASES = {
     'default': {
@@ -14,7 +14,10 @@ DATABASES = {
         'NAME': 'db_test.sqlite3',
     }
 }
-# -----------------------------------------------|
+ALLOWED_HOSTS = []
+INTERNAL_IPS = []
+
+# ------------------------------------------------
 #
 INSTALLED_APPS += [
     'debug_toolbar'

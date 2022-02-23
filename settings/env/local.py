@@ -1,17 +1,17 @@
 from settings.base import *  # noqa
 
 
-# -----------------------------------------------|
+# ------------------------------------------------
 #
 DEBUG = True
 WSGI_APPLICATION = None
 
-# -----------------------------------------------|
+# ------------------------------------------------
 #
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db_local.sqlite3',
+        'NAME': 'db.sqlite3',
     }
 }
 ALLOWED_HOSTS = [
@@ -20,7 +20,7 @@ ALLOWED_HOSTS = [
 ]
 INTERNAL_IPS = ['127.0.0.1']
 
-# -----------------------------------------------|
+# ------------------------------------------------
 #
 INSTALLED_APPS += [
     'debug_toolbar'
