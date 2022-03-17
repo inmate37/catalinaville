@@ -41,6 +41,9 @@ SHELL_PLUS_PRE_IMPORTS = [
     ('json', ('loads', 'dumps')),
 ]
 SHELL_PLUS_MODEL_ALIASES = {
+    'auths': {
+        'CustomUser': 'U',
+    },
     'university': {
         'Student': 'S',
         'Account': 'A',

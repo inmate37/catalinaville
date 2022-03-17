@@ -1,17 +1,30 @@
 from django.db.models import QuerySet
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse
-from django.contrib.auth.models import User
 from django.shortcuts import render
-
-from university.models import Student
+from django.contrib.auth import (
+    authenticate as dj_authenticate,
+    login as dj_login,
+    logout as dj_logout,
+)
+from auths.forms import CustomUserForm
+from auths.models import CustomUser
+from university.models import Homework
 
 
 def index(request: WSGIRequest) -> HttpResponse:
-    users: QuerySet = User.objects.all()
+    if not request.user.is_authenticated:
+        return render(
+            request,
+            'university/login.html'
+        )
+
+    homeworks: QuerySet = Homework.objects.filter(
+        user=request.user
+    )
     context: dict = {
         'ctx_title': 'Главная страница',
-        'ctx_users': users,
+        'ctx_homeworks': homeworks,
     }
     return render(
         request,
@@ -20,11 +33,10 @@ def index(request: WSGIRequest) -> HttpResponse:
     )
 
 
-def show(request: WSGIRequest) -> HttpResponse:
-    user: User = request.user
-
-    # TODO: pass selected user ctx to template
-
+def show(request: WSGIRequest, pk: int) -> HttpResponse:
+    user: CustomUser = CustomUser.objects.get(
+        id=pk
+    )
     context: dict = {
         'ctx_title': 'Профиль пользователя',
         'ctx_user': user,
@@ -37,7 +49,6 @@ def show(request: WSGIRequest) -> HttpResponse:
 
 
 def delete(request: WSGIRequest) -> HttpResponse:
-    # TODO
     pass
 
 
@@ -52,3 +63,99 @@ def primitive(request: WSGIRequest) -> HttpResponse:
     return HttpResponse(
         '<h1>Примитивная страница</h1>'
     )
+
+
+def logout(request: WSGIRequest) -> HttpResponse:
+
+    dj_logout(request)
+
+    form: CustomUserForm = CustomUserForm(
+        request.POST
+    )
+    context: dict = {
+        'form': form,
+    }
+    return render(
+        request,
+        'university/login.html',
+        context
+    )
+
+
+def login(request: WSGIRequest) -> HttpResponse:
+
+    if request.method == 'POST':
+        email: str = request.POST['email']
+        password: str = request.POST['password']
+
+        user: CustomUser = dj_authenticate(
+            email=email,
+            password=password
+        )
+        if not user:
+            return render(
+                request,
+                'university/login.html',
+                {'error_message': 'Неверные данные'}
+            )
+        if not user.is_active:
+            return render(
+                request,
+                'university/login.html',
+                {'error_message': 'Ваш аккаунт был удален'}
+            )
+        dj_login(request, user)
+
+        homeworks: QuerySet = Homework.objects.filter(
+            user=request.user
+        )
+        return render(
+            request,
+            'university/index.html',
+            {'homeworks': homeworks}
+        )
+    return render(
+        request,
+        'university/login.html'
+    )
+
+
+def register(request: WSGIRequest) -> HttpResponse:
+
+    form: CustomUserForm = CustomUserForm(
+        request.POST
+    )
+    if not form.is_valid():
+        context: dict = {
+            'form': form
+        }
+        return render(
+            request,
+            'university/register.html',
+            context
+        )
+    user: CustomUser = form.save(
+        commit=False
+    )
+    email: str = form.cleaned_data['email']
+    password: str = form.cleaned_data['password']
+    user.email = email
+    user.set_password(password)
+    user.save()
+
+    user: CustomUser = dj_authenticate(
+        email=email,
+        password=password
+    )
+    if user and user.is_active:
+
+        dj_login(request, user)
+
+        homeworks: QuerySet = Homework.objects.filter(
+            user=request.user
+        )
+        return render(
+            request,
+            'university/index.html',
+            {'homeworks': homeworks}
+        )

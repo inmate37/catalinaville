@@ -1,15 +1,11 @@
 import random
 import names
-from typing import Any
 from datetime import datetime
 
 from django.core.management.base import BaseCommand
-from django.conf import settings
-from django.contrib.auth.models import (
-    User,
-)
 from django.contrib.auth.hashers import make_password
 
+from auths.models import CustomUser
 from university.models import (
     Group,
     Account,
@@ -40,7 +36,7 @@ class Command(BaseCommand):
         )
 
     def _generate_users(self) -> None:
-        """Generates User objects."""
+        """Generates CustomUser objects."""
 
         TOTAL_USERS_COUNT = 500
 
@@ -75,45 +71,39 @@ class Command(BaseCommand):
 
         # Generating superuser
         #
-        if not User.objects.filter(is_superuser=True).exists():
+        if not CustomUser.objects.filter(is_superuser=True).exists():
             superuser: dict = {
-                'is_superuser': True,
-                'username': 'dmytro',
+                'is_root': True,
                 'email': 'dmytro@mail.ua',
                 'password': 'barakobama',
-                'first_name': 'Дмитрий',
-                'last_name': 'Гордон',
             }
-            User.objects.create_superuser(**superuser)
+            CustomUser.objects.create_superuser(**superuser)
 
         # Generating users
         #
-        if User.objects.filter(
-            is_superuser=False
+        if CustomUser.objects.filter(
+            is_root=False
         ).count() == TOTAL_USERS_COUNT:
             return
 
+        # username: str = ''
         first_name: str = ''
         last_name: str = ''
-        password: str = ''
-        username: str = ''
         email: str = ''
+        password: str = ''
         _: int
         for _ in range(TOTAL_USERS_COUNT):
+            # username = generate_username()
             first_name = names.get_first_name()
             last_name = names.get_last_name()
-            username = generate_username()
             email = generate_email()
             password = generate_password()
 
             user: dict = {
-                'username': username,
                 'email': email,
-                'password': password,
-                'first_name': first_name,
-                'last_name': last_name,
+                'password': password
             }
-            User.objects.get_or_create(**user)
+            CustomUser.objects.get_or_create(**user)
 
     def _generate_groups(self) -> None:
         """Generates Group objs."""

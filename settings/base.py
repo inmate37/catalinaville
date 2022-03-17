@@ -8,6 +8,7 @@ from settings.conf import *  # noqa
 # Path
 #
 ROOT_URLCONF = 'settings.urls'
+AUTH_USER_MODEL = 'auths.CustomUser'
 
 BASE_DIR = os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))
@@ -31,6 +32,7 @@ DJANGO_AND_THIRD_PARTY_APPS = [
 PROJECT_APPS = [
     'abstracts.apps.AbstractsConfig',
     'university.apps.UniversityConfig',
+    'auths.apps.AuthsConfig',
 ]
 INSTALLED_APPS = DJANGO_AND_THIRD_PARTY_APPS + PROJECT_APPS
 

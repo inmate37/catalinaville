@@ -2,57 +2,38 @@ from typing import Optional
 
 from django.core.handlers.wsgi import WSGIRequest
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import User
 
 from university.models import (
-    Account,
     Student,
     Group,
     Professor,
+    Homework,
+    File,
 )
 
 
-class CustomUserAdmin(UserAdmin):
-    readonly_fields = ()
-
-    def get_readonly_fields(
-        self,
-        request: WSGIRequest,
-        obj: Optional[User] = None
-    ) -> tuple:
-        if not obj:
-            return self.readonly_fields
-
-        return self.readonly_fields + (
-            'first_name',
-            'last_name',
-            'email',
-            'username',
-            'is_active',
-            'is_staff',
-            'is_superuser',
-            'date_joined',
-            'last_login',
-        )
-
-
-class AccountAdmin(admin.ModelAdmin):
-    readonly_fields = (
-        'datetime_created',
-        'datetime_updated',
-        'datetime_deleted',
-    )
-
-    def get_readonly_fields(
-        self,
-        request: WSGIRequest,
-        obj: Optional[Account] = None
-    ) -> tuple:
-        if not obj:
-            return self.readonly_fields
-
-        return self.readonly_fields + ('description',)
+# class CustomUserAdmin(UserAdmin):
+#     readonly_fields = ()
+#
+#     def get_readonly_fields(
+#         self,
+#         request: WSGIRequest,
+#         obj: Optional[User] = None
+#     ) -> tuple:
+#         if not obj:
+#             return self.readonly_fields
+#
+#         return self.readonly_fields + (
+#             'first_name',
+#             'last_name',
+#             'email',
+#             'username',
+#             'is_active',
+#             'is_staff',
+#             'is_superuser',
+#             'date_joined',
+#             'last_login',
+#         )
 
 
 class StudentAdmin(admin.ModelAdmin):
@@ -63,18 +44,18 @@ class StudentAdmin(admin.ModelAdmin):
         'datetime_updated',
         'datetime_deleted',
     )
+    list_display = (
+        #'account__full_name',
+        #'get_account_full_name'
+        'age',
+        'gpa',
+    )
     list_filter = (
         'age',
         'gpa',
     )
     search_fields = (
         'account__full_name',
-    )
-    list_display = (
-        #'account__full_name',
-        #'get_account_full_name'
-        'age',
-        'gpa',
     )
 
     def get_account_full_name(self, obj: Student) -> str:
@@ -117,7 +98,10 @@ class StudentAdmin(admin.ModelAdmin):
         #     return self.readonly_fields + ('age',)
         # return self.readonly_fields
 
-        age_condition: bool = obj.age <= self.STUDENT_EDIT_MAX_AGE
+        age_condition: bool = False
+        if obj:
+            age_condition = obj.age <= self.STUDENT_EDIT_MAX_AGE
+
         if obj and age_condition:
             return self.readonly_fields + ('age',)
 
@@ -140,15 +124,56 @@ class ProfessorAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.unregister(
-    User
-)
-admin.site.register(
-    User, CustomUserAdmin
-)
-admin.site.register(
-    Account, AccountAdmin
-)
+class HomeworkAdmin(admin.ModelAdmin):
+    readonly_fields = (
+        'datetime_created',
+        'datetime_updated',
+        'datetime_deleted',
+    )
+    def get_readonly_fields(
+        self,
+        request: WSGIRequest,
+        obj: Optional[Student] = None
+    ) -> tuple:
+        if obj:
+            return self.readonly_fields + (
+                'user',
+                'title',
+                'subject',
+                'logo',
+                'is_checked',
+            )
+        return self.readonly_fields
+
+
+class FileAdmin(admin.ModelAdmin):
+    readonly_fields = (
+        'datetime_created',
+        'datetime_updated',
+        'datetime_deleted',
+        'title',
+        'obj',
+    )
+    def get_readonly_fields(
+        self,
+        request: WSGIRequest,
+        obj: Optional[Student] = None
+    ) -> tuple:
+        if obj:
+            return self.readonly_fields + (
+                'homework',
+                'title',
+                'obj',
+            )
+        return self.readonly_fields
+
+
+# admin.site.unregister(
+#     User
+# )
+# admin.site.register(
+#     User, CustomUserAdmin
+# )
 admin.site.register(
     Group, GroupAdmin
 )
@@ -157,4 +182,10 @@ admin.site.register(
 )
 admin.site.register(
     Professor, ProfessorAdmin
+)
+admin.site.register(
+    Homework, HomeworkAdmin
+)
+admin.site.register(
+    File, FileAdmin
 )
