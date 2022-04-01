@@ -167,18 +167,34 @@ class HomeworkQuerySet(QuerySet):
 
 
 class Homework(AbstractDateTime):
-    user = models.ForeignKey(
-        CustomUser, on_delete=models.PROTECT
+
+    IMAGE_FILE_TYPES = (
+        'png',
+        'jpg',
+        'jpeg',
     )
-    title = models.CharField(max_length=100)
-    subject = models.CharField(max_length=50)
+    user = models.ForeignKey(
+        CustomUser,
+        verbose_name='загрузчик',
+        on_delete=models.PROTECT
+    )
+    title = models.CharField(
+        verbose_name='заголовок',
+        max_length=100
+    )
+    subject = models.CharField(
+        verbose_name='топик',
+        max_length=50
+    )
     logo = models.ImageField(
-        'Лого домашней работы',
+        verbose_name='лого',
         upload_to='homework/',
         max_length=255
     )
-    is_checked = models.BooleanField(default=False)
-
+    is_checked = models.BooleanField(
+        verbose_name='проверен ли',
+        default=False
+    )
     objects = HomeworkQuerySet().as_manager()
 
     def __str__(self) -> str:
