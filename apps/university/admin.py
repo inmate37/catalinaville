@@ -146,26 +146,25 @@ class HomeworkAdmin(admin.ModelAdmin):
 
 
 class FileAdmin(admin.ModelAdmin):
-    readonly_fields = ()
-    # readonly_fields = (
-    #     'datetime_created',
-    #     'datetime_updated',
-    #     'datetime_deleted',
-    #     'title',
-    #     'obj',
-    # )
-    # def get_readonly_fields(
-    #     self,
-    #     request: WSGIRequest,
-    #     obj: Optional[Student] = None
-    # ) -> tuple:
-    #     if obj:
-    #         return self.readonly_fields + (
-    #             'homework',
-    #             'title',
-    #             'obj',
-    #         )
-    #     return self.readonly_fields
+    readonly_fields = (
+        'datetime_created',
+        'datetime_updated',
+        'datetime_deleted',
+    )
+    def get_readonly_fields(
+        self,
+        request: WSGIRequest,
+        obj: Optional[Student] = None
+    ) -> tuple:
+        if not obj:
+            return self.readonly_fields
+
+        return self.readonly_fields + (
+            'homework',
+            'title',
+            'obj',
+            'is_checked',
+        )
 
 
 # admin.site.unregister(

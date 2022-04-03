@@ -1,5 +1,5 @@
-{% extends 'university/visitor.html' %}
-{% block title %}Логин{% endblock %}
+{% extends 'university/base_visitor.html' %}
+{% block ctx_title %}Логин{% endblock %}
 {% block login_active %}active{% endblock %}
 
 {% block body %}
@@ -9,10 +9,13 @@
         <div class="col-sm-12 col-md-6">
             <div class="panel panel-default">
                 <div class="panel-body">
+
                     <h3>Авторизация</h3>
+
                     {% if error_message %}
                         <p><strong>{{ error_message }}</strong></p>
                     {% endif %}
+
                     <form class="form-horizontal" role="form" action="{% url 'page_login'%}" method="post" enctype="multipart/form-data">
 
                         {% csrf_token %}
