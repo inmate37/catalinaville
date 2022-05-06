@@ -46,6 +46,21 @@ class IndexView(ViewHandler, View):
     ) -> HttpResponse:
         """GET request handler."""
 
+        def _apply_filtering_on_queryset(
+            request: WSGIRequest,
+            homeworks: QuerySet
+        ) -> None:
+            """1."""
+
+            query: str = request.GET.get(
+                'query', ''
+            )
+            if query:
+                homeworks = homeworks.filter(
+                    Q(title__icontains=query) |
+                    Q(subject__icontains=query)
+                ).distinct()
+
         response: Optional[HttpResponse] = \
             self.get_validated_response(
                 request
@@ -56,15 +71,12 @@ class IndexView(ViewHandler, View):
         homeworks: QuerySet = self.queryset.filter(
             user=request.user
         )
-        query: str = request.GET.get(
-            'query', ''
+        # Кастомный поиск на сайте
+        #
+        _apply_filtering_on_queryset(
+            request,
+            homeworks
         )
-        if query:
-            homeworks = homeworks.filter(
-                Q(title__icontains=query) |
-                Q(subject__icontains=query)
-            ).distinct()
-
         if not homeworks:
             homeworks = self.queryset
 
@@ -279,7 +291,8 @@ class HomeworkFilesCheckView(ViewHandler, View):
         from django.http import JsonResponse
 
         file: File = get_object_or_404(
-            File, id=file_id
+            File,
+            id=file_id
         )
         try:
             if file.is_checked:
@@ -305,27 +318,22 @@ class HomeworkFilesDeleteView(ViewHandler, View):
     def post(
         self,
         request: WSGIRequest,
-        homework_id: int,
         file_id: int,
         *args: tuple,
         **kwargs: dict
     ) -> HttpResponse:
         """POST request handler."""
 
-        homework: Homework = get_object_or_404(
-            Homework,
-            id=1
-        )
-        file: File = Homework.objects.get(
+        file: File = File.objects.get(
             id=file_id
         )
-        #file.delete()
+        file.delete()
 
         return self.get_http_response(
             request,
             template_name=self.template_name,
             context={
-                'ctx_homework': homework
+                'ctx_homework': file.homework
             }
         )
 

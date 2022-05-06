@@ -3,6 +3,7 @@ from typing import Optional
 from django.core.handlers.wsgi import WSGIRequest
 from django.contrib import admin
 
+from abstracts.filters import CommonStateFilter
 from university.models import (
     Student,
     Group,
@@ -45,24 +46,24 @@ class StudentAdmin(admin.ModelAdmin):
         'datetime_deleted',
     )
     list_display = (
-        #'account__full_name',
-        #'get_account_full_name'
+        #'get_account_full_name',
         'age',
         'gpa',
     )
     list_filter = (
         'age',
         'gpa',
+        CommonStateFilter,
     )
     search_fields = (
-        'account__full_name',
+        'gpa',
     )
 
     def get_account_full_name(self, obj: Student) -> str:
         return obj.account.full_name
 
-    get_account_full_name.short_description = 'Аккаунт'
-    get_account_full_name.admin_order_field = 'account__full_name'
+    # get_account_full_name.short_description = 'Аккаунт'
+    # get_account_full_name.admin_order_field = 'gpa'
 
     def student_age_validation(
         self,

@@ -35,6 +35,16 @@ class StudentQuerySet(QuerySet):
             age__gte=self.ADULT_AGE
         )
 
+    def get_deleted(self) -> QuerySet:
+        return self.filter(
+            datetime_deleted__isnull=False
+        )
+
+    def get_not_deleted(self) -> QuerySet:
+        return self.filter(
+            datetime_deleted__isnull=True
+        )
+
 
 class Student(AbstractDateTime):
     MAX_AGE = 27
@@ -179,7 +189,8 @@ class Homework(AbstractDateTime):
     )
     title = models.CharField(
         verbose_name='заголовок',
-        max_length=100
+        max_length=100,
+        null=True
     )
     subject = models.CharField(
         verbose_name='топик',
@@ -248,6 +259,15 @@ class File(AbstractDateTime):
 
     def __str__(self) -> str:
         return f'{self.homework.title} | {self.title}'
+
+    def delete(self) -> None:
+        self.datetime_deleted = datetime.now()
+        self.save(
+            update_fields=['datetime_deleted']
+        )
+        # NOTE: Actual thing that will be triggered
+        #
+        # super().delete()
 
     class Meta:
         ordering = (
